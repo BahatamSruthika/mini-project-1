@@ -1,0 +1,154 @@
+import java.util.Scanner;
+
+public class ConnectFour {
+
+    static final int ROWS = 6;
+    static final int COLS = 7;
+    static Scanner sc = new Scanner(System.in);
+
+    public static void main(String[] args) {
+
+        char playAgain;
+
+        do {
+            char[][] board = new char[ROWS][COLS];
+
+            // Fill board with spaces
+            for (int i = 0; i < ROWS; i++) {
+                for (int j = 0; j < COLS; j++) {
+                    board[i][j] = '.';
+                }
+            }
+
+            char currentPlayer = 'X';
+            boolean gameOver = false;
+
+            while (!gameOver) {
+
+                displayBoard(board);
+
+                System.out.println("Player " + currentPlayer + ", choose column (1-7): ");
+                int col = sc.nextInt() - 1;
+
+                if (col < 0 || col >= COLS) {
+                    System.out.println("Invalid column! Try again.");
+                    continue;
+                }
+
+                if (!dropPiece(board, col, currentPlayer)) {
+                    System.out.println("Column is full! Choose another.");
+                    continue;
+                }
+
+                if (checkWinner(board, currentPlayer)) {
+                    displayBoard(board);
+                    System.out.println("Player " + currentPlayer + " wins!");
+                    gameOver = true;
+                } else if (isDraw(board)) {
+                    displayBoard(board);
+                    System.out.println("It's a Draw!");
+                    gameOver = true;
+                } else {
+                    currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+                }
+            }
+
+            System.out.print("Play Again? (Y/N): ");
+            playAgain = sc.next().charAt(0);
+
+        } while (playAgain == 'Y' || playAgain == 'y');
+
+        System.out.println("Thanks for playing!");
+    }
+
+    // Display Board
+    static void displayBoard(char[][] board) {
+
+        System.out.println();
+
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+
+        System.out.println("1 2 3 4 5 6 7");
+        System.out.println();
+    }
+
+    // Drop Piece
+    static boolean dropPiece(char[][] board, int col, char player) {
+
+        for (int row = ROWS - 1; row >= 0; row--) {
+            if (board[row][col] == '.') {
+                board[row][col] = player;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    // Draw Check
+    static boolean isDraw(char[][] board) {
+
+        for (int j = 0; j < COLS; j++) {
+            if (board[0][j] == '.') {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // Winner Check
+    static boolean checkWinner(char[][] board, char player) {
+
+        // Horizontal
+        for (int i = 0; i < ROWS; i++) {
+            for (int j = 0; j < COLS - 3; j++) {
+                if (board[i][j] == player &&
+                        board[i][j + 1] == player &&
+                        board[i][j + 2] == player &&
+                        board[i][j + 3] == player)
+                    return true;
+            }
+        }
+
+        // Vertical
+        for (int i = 0; i < ROWS - 3; i++) {
+            for (int j = 0; j < COLS; j++) {
+                if (board[i][j] == player &&
+                        board[i + 1][j] == player &&
+                        board[i + 2][j] == player &&
+                        board[i + 3][j] == player)
+                    return true;
+            }
+        }
+
+        // Diagonal (Down Right)
+        for (int i = 0; i < ROWS - 3; i++) {
+            for (int j = 0; j < COLS - 3; j++) {
+                if (board[i][j] == player &&
+                        board[i + 1][j + 1] == player &&
+                        board[i + 2][j + 2] == player &&
+                        board[i + 3][j + 3] == player)
+                    return true;
+            }
+        }
+
+        // Diagonal (Up Right)
+        for (int i = 3; i < ROWS; i++) {
+            for (int j = 0; j < COLS - 3; j++) {
+                if (board[i][j] == player &&
+                        board[i - 1][j + 1] == player &&
+                        board[i - 2][j + 2] == player &&
+                        board[i - 3][j + 3] == player)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+}
